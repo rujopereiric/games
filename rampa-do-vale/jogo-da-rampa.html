@@ -517,7 +517,7 @@ let W = 0, H = 0, DPR = 1, F = 1, HW = 0, HY = 0;
 function resize(){
   DPR = Math.min(window.devicePixelRatio || 1, 2);
   const maxW = 1700;
-  let w = window.innerWidth, h = window.innerHeight;
+  let w = window.innerWidth || document.documentElement.clientWidth, h = window.innerHeight || document.documentElement.clientHeight;
   let k = DPR; if (w*k > maxW) k = maxW / w;
   const target = STYLE === 'pixel' ? PIXEL_BUDGET : STYLE === 'litho' ? 380000 : 0;
   if (target && w*h*k*k > target) k = Math.sqrt(target/(w*h));
@@ -2618,6 +2618,7 @@ if (DEMO){
 // ---------- loop ----------
 let last = performance.now();
 function frame(now){
+  if (!W || !H || cv.width !== W){ resize(); if (!W || !H){ last = now; requestAnimationFrame(frame); return; } }
   let dt = (now - last)/1000; last = now;
   if (dt > 0.05) dt = 0.05;
   if (G.state !== 'pause') update(dt);
