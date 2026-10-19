@@ -52,14 +52,13 @@ cobblestone trophy.
   "large-crowd-medium-distance-stereo" by eguobyte (CC0), "Clapping for Carers in Oxford, April 2020"
   by Pierre Marshall (CC0), "Clapping hurray" by starlite (public domain).
   The murmur is always there; street cheering swells with the crowd; a "hurray" plays at key moments.
-- Music: Rui's own melody (a 32-beat loop at 125 bpm),
+- Music: Rampa's Anthem (a 32-beat loop at 125 bpm),
   arranged as old-console chiptune: pulse-wave lead, off-beat arpeggio blips, triangle oom-pah bass,
   noise drums. Notes snapped to the eighth-note grid; no echo.
 - Menu music: a calm version of the same melody (96 bpm, soft pulse lead, arpeggios, slow bass, no drums)
   on the title, how-to, category and results screens; silent countdown; race music starts at GO.
-- Shouts ("VAI!", "BORA!"): Rui's own recordings; each also has a deeper and a higher version.
+- Shouts ("VAI!", "BORA!"): self recordings; each also has a deeper and a higher version.
 - Megaphone countdown and finish fanfare are made by the game.
-- The official race anthem (by Oriano) is not included: it is copyrighted and would need his permission.
 
 ## Font
 
