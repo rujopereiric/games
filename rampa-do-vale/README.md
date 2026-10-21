@@ -27,7 +27,11 @@ Everything is in that one file: graphics are drawn by code, and the font is buil
 - **Other keys:** P or Esc pauses, M mutes, Enter starts.
 
 Five categories, as in the real race: Women 18–45, Women 45+, Men 18–45, Men 45+ and Electric.
-The fastest rival in each category rides the real 2025 winning time; beat it to win the
+Every category rides the same bike, so a good ride lasts about 70 seconds for everyone.
+The race clock runs at each category's real pace (average winning time 2024–2026; earlier editions used a longer course):
+1.00× Men 18–45, 0.97× Electric, 1.37× Men 45+, 1.51× Women 18–45, 1.94× Women 45+.
+Penalties cost the same riding time everywhere (shown on the category's clock).
+The fastest rival in each category rides the real 2026 winning time; beat it to win the
 cobblestone trophy.
 
 ## What the game is based on
@@ -40,7 +44,7 @@ cobblestone trophy.
   and a hand-painted banner "VIVA O DESPORTO POPULAR" (inspired by the club's banner at the race).
 - History: 1941–1954 by Mirantense FC (first winner 1941: Francisco Inácio, Sporting);
   back since 2021 with ADR "O Relâmpago".
-- 2025 winning times from rampadovale.pt/rampa-2025.
+- Winning times 2024–2026 from rampadovale.pt (pages rampa-2024, rampa-2025, rampa-2026).
 - The cyclist wears the white race jersey of ADR "O Relâmpago" with claret and sky-blue bands.
 - Start area from race photos: barrier chute, official with a clipboard, countdown by megaphone,
   stewards in hi-vis vests, zebra crossing on asphalt; tall 1960s–70s apartment blocks at the top.

@@ -261,7 +261,7 @@ const TXT = {
     h4:'<b>Público:</b> encostar trava-te. Bater com força ou parar = pé no chão, <b>+5 s</b>. Atenção a quem se distrai no meio da rua!',
     h5:'<b>Energia:</b> o início é o mais duro, não gastes tudo. As varandas do concurso (★) dão energia. Encosta-te a quem te estende uma mini ou uma bifana para a apanhar.',
     h6:'<b>Objetivo:</b> bater os tempos dos rivais da tua categoria e ganhar o troféu de calçada.',
-    helmet:'Capacete obrigatório ✔',
+    helmet:'Tempos dos vencedores reais: 2026 e média 2024–26. Todas as categorias têm a mesma bicicleta; o relógio segue o ritmo real de cada uma. Capacete obrigatório ✔',
     power:'Força', stamina:'Fôlego', weight:'Leveza',
     eextra:'Motor de assistência, mas patina mais na calçada',
     cats:['Femininos 18–45','Femininos 45+','Masculinos 18–45','Masculinos 45+','Elétricas'],
@@ -272,8 +272,8 @@ const TXT = {
     paused:'Pausa', resume:'Continuar', quit:'Sair',
     result:'Resultado', again:'Repetir', change:'Mudar categoria', menu:'Menu',
     win:'Venceste! O troféu de calçada é teu.', podium:'Pódio! Lugar {p}.', other:'Lugar {p}. A calçada não perdoa — tenta outra vez!',
-    pb:'Novo recorde pessoal!', realwin:'O 1.º rival tem o tempo do vencedor real de 2025.', best:'Melhor tempo: {t}', none:'—', you:'Tu', pens:'inclui {n} s de penalização',
-    best1:'Recorde: {t}'
+    pb:'Novo recorde pessoal!', realwin:'O 1.º rival tem o tempo do vencedor de 2026. O relógio segue o ritmo real da categoria (média 2024–26).', best:'Melhor tempo: {t}', none:'—', you:'Tu', pens:'inclui {n} s de penalização',
+    best1:'Recorde: {t}', win26:'2026: {t}', winavg:'Média: {t}'
   },
   en: {
     kicker:'Fan game', title:'Subida da Rampa do Vale de Santo António',
@@ -289,7 +289,7 @@ const TXT = {
     h4:'<b>Crowd:</b> brushing it slows you. Hitting it hard or stalling = foot down, <b>+5 s</b>. Watch out for people wandering into the road!',
     h5:'<b>Energy:</b> the start is the hardest part, don\'t burn it all. Contest balconies (★) give energy. Steer close to fans holding out a beer or a bifana to grab it.',
     h6:'<b>Goal:</b> beat your category rivals\' times and win the cobblestone trophy.',
-    helmet:'Helmet mandatory ✔',
+    helmet:'Real winning times: 2026 and the 2024–26 average. Every category rides the same bike; the clock runs at each category\'s real pace. Helmet mandatory ✔',
     power:'Power', stamina:'Stamina', weight:'Light',
     eextra:'Motor assist, but slips more on the cobbles',
     cats:['Women 18–45','Women 45+','Men 18–45','Men 45+','Electric'],
@@ -300,8 +300,8 @@ const TXT = {
     paused:'Paused', resume:'Resume', quit:'Quit',
     result:'Result', again:'Ride again', change:'Change category', menu:'Menu',
     win:'You won! The cobblestone trophy is yours.', podium:'Podium! Place {p}.', other:'Place {p}. The cobbles show no mercy — try again!',
-    pb:'New personal best!', realwin:'The top rival rides the real 2025 winning time.', best:'Best time: {t}', none:'—', you:'You', pens:'includes {n} s of penalties',
-    best1:'Best: {t}'
+    pb:'New personal best!', realwin:'The top rival rides the real 2026 winning time. The clock runs at the category\'s real pace (2024–26 average).', best:'Best time: {t}', none:'—', you:'You', pens:'includes {n} s of penalties',
+    best1:'Best: {t}', win26:'2026: {t}', winavg:'Avg: {t}'
   }
 };
 let LANG = 'pt';
@@ -317,10 +317,10 @@ function applyLang(){
 // ---------- categories ----------
 // P = max power (W), m = rider+bike mass (kg), drain = energy use multiplier, slipC = cadence where wheel slips
 const CATS = [
-  {id:'f18', col:'#e63946', col2:'#ffd6d9', P:382, m:70, drain:1.00, slipC:6.7, assist:0},
-  {id:'f45', col:'#8e4fd6', col2:'#e6d6ff', P:292, m:71, drain:0.84, slipC:6.7, assist:0},
+  {id:'f18', col:'#e63946', col2:'#ffd6d9', P:724, m:84, drain:1.00, slipC:6.7, assist:0},
+  {id:'f45', col:'#8e4fd6', col2:'#e6d6ff', P:724, m:84, drain:1.00, slipC:6.7, assist:0},
   {id:'m18', col:'#1d70b8', col2:'#cfe3f7', P:724, m:84, drain:1.00, slipC:6.7, assist:0},
-  {id:'m45', col:'#1f9a8a', col2:'#cdeee9', P:516, m:85, drain:0.84, slipC:6.7, assist:0},
+  {id:'m45', col:'#1f9a8a', col2:'#cdeee9', P:724, m:84, drain:1.00, slipC:6.7, assist:0},
   {id:'e',   col:'#f29e00', col2:'#ffe9b8', P:602, m:100, drain:0.80, slipC:6.0, assist:430}
 ];
 const RIVALS = {
@@ -331,8 +331,17 @@ const RIVALS = {
   e:  ['Vasco Volt','Lena Watt','Duarte Dínamo','Bino Bateria','Teresa Turbo']
 };
 const RIVAL_F = [1.0, 1.05, 1.1, 1.17, 1.26];
-// real 2025 winning times (rampadovale.pt/rampa-2025), in seconds
-const REAL_WIN = {f18:110.0, f45:136.1, m18:70.0, m45:92.0, e:73.0};
+// real winning times (rampadovale.pt/rampa-2024, -2025, -2026), in seconds; 2021-2023 used a longer course
+const WIN_2024 = {f18:104.55, f45:136.60, m18:66.66, m45:95.58, e:71.10};
+const WIN_2025 = {f18:110.00, f45:136.08, m18:70.03, m45:92.03, e:73.01};
+const WIN_2026 = {f18:101.80, f45:134.60, m18:73.00, m45:99.60, e:58.80};
+const WIN_AVG = {};
+for (const k in WIN_2026) WIN_AVG[k] = (WIN_2024[k] + WIN_2025[k] + WIN_2026[k]) / 3;
+const REAL_WIN = WIN_2026;                                  // the top rival rides this year's winning time
+// the race clock runs at the category's real pace: 1 s of riding shows as CLOCK[cat] seconds
+const CLOCK = {};
+for (const k in WIN_AVG) CLOCK[k] = WIN_AVG[k] / WIN_AVG.m18;
+function clockK(){ return CLOCK[CATS[catIdx].id]; }
 let catIdx = 2;
 try { const c = +localStorage.getItem('rampa-cat'); if (c >= 0 && c < 5) catIdx = c; } catch (e) {}
 
@@ -583,6 +592,11 @@ function accel(cat, eff, v, grade){
   const Fd = Math.min(P / Math.max(v, 1.1), 520);
   const Fg = m*g*Math.sin(th), Fr = 0.018*m*g*Math.cos(th), Fa = 0.5*1.2*0.45*v*v;
   return (Fd - Fg - Fr - Fa) / m;
+}
+{
+  const ref = simulate(CATS[2]).time * 0.95, e = CATS[4];   // 5% margin: the e-bike slips more on the cobbles than the simulation counts
+  let lo = 150, hi = 1200;
+  for (let it = 0; it < 14; it++){ e.P = (lo + hi)/2; if (simulate(e).time > ref) lo = e.P; else hi = e.P; }
 }
 CATS.forEach((c,i) => PAR[i] = simulate(c));
 
@@ -1035,16 +1049,11 @@ function saveBest(b){ try { localStorage.setItem('rampa-best', JSON.stringify(b)
 
 function buildCats(){
   const box = $('cats'); box.innerHTML = ''; const best = loadBest();
-  const maxP = 760, minM = 70;
   CATS.forEach((c, i) => {
     const el = document.createElement('div'); el.className = 'cat' + (i === catIdx ? ' sel' : '');
-    const pw = Math.round(((c.P + c.assist*0.75) / (maxP + 50)) * 100);
-    const st = Math.round((1.25 - c.drain) / 0.45 * 100);
-    const lt = Math.round(minM / c.m * 100);
     el.innerHTML = '<b><span class="sw" style="background:'+c.col+'"></span>'+T('cats')[i]+'</b>'+
-      '<div class="stat"><span>'+T('power')+'</span><i style="--v:'+Math.min(100,pw)+'%"></i></div>'+
-      '<div class="stat"><span>'+T('stamina')+'</span><i style="--v:'+Math.min(100,st)+'%"></i></div>'+
-      '<div class="stat"><span>'+T('weight')+'</span><i style="--v:'+Math.min(100,lt)+'%"></i></div>'+
+      '<div class="pb">'+T('win26').replace('{t}', fmt(WIN_2026[c.id]))+'</div>'+
+      '<div class="pb">'+T('winavg').replace('{t}', fmt(WIN_AVG[c.id]))+'</div>'+
       (c.assist ? '<div class="extra">'+T('eextra')+'</div>' : '')+
       '<div class="pb">'+T('best1').replace('{t}', best[c.id] ? fmt(best[c.id]) : T('none'))+'</div>';
     el.onclick = () => { catIdx = i; try { localStorage.setItem('rampa-cat', i); } catch (e) {} buildCats(); };
@@ -1068,7 +1077,7 @@ function startRace(){
   drawProfileBase();
 }
 function finishRace(){
-  G.state = 'finish'; G.finT = 0; G.finalTime = G.time + G.pen;
+  G.state = 'finish'; G.finT = 0; G.finalTime = (G.time + G.pen) * clockK();
   msg(T('finish'), 2, true); cheer(1.2);
   stopMusic(); [523,659,784,1047,784,1047].forEach((f,i) => tone(f, i < 5 ? 0.16 : 0.6, 'square', 0.12, i*0.11)); cheer(1.5);
 }
@@ -1086,7 +1095,7 @@ function showResults(){
   $('rVerdict').textContent = place === 1 ? T('win') : place <= 3 ? T('podium').replace('{p}', place+'.º') : T('other').replace('{p}', place+'.º');
   if (LANG === 'en') $('rVerdict').textContent = $('rVerdict').textContent.replace(place+'.º', ['','1st','2nd','3rd','4th','5th','6th'][place]);
   let extra = T('cats')[catIdx];
-  if (G.pen > 0) extra += ' · ' + T('pens').replace('{n}', G.pen);
+  if (G.pen > 0) extra += ' · ' + T('pens').replace('{n}', Math.round(G.pen * clockK()));
   extra += ' · ' + (pb ? T('pb') : T('best').replace('{t}', fmt(best[cat.id])));
   $('rExtra').textContent = extra + ' · ' + T('realwin');
   $('rTable').innerHTML = rows.map((r,i) => '<tr'+(r.me?' class="me"':'')+'><td>'+(i+1)+'.</td><td>'+r.name+'</td><td>'+fmt(r.t)+'</td></tr>').join('');
@@ -1295,15 +1304,15 @@ function drawProfileBase(){
 }
 function hud(d){
   const cat = CATS[catIdx];
-  const total = G.state === 'finish' ? G.finalTime : G.time + G.pen;
+  const total = G.state === 'finish' ? G.finalTime : (G.time + G.pen) * clockK();
   $('hTime').textContent = fmt(total);
   const dd = Math.max(0, Math.min(COURSE, Math.floor(d)));
   if (G.state === 'race' && dd > 2){
-    const lead = PAR[catIdx].trace[dd] * REAL_WIN[cat.id] / PAR[catIdx].time;
+    const lead = PAR[catIdx].trace[dd] / PAR[catIdx].time * REAL_WIN[cat.id];
     const delta = total - lead;
     const el = $('hDelta'); el.textContent = T('vs') + ' ' + fmtD(delta); el.className = delta <= 0 ? 'ahead' : 'behind';
   } else if (G.state === 'race') $('hDelta').textContent = '';
-  $('hPen').textContent = G.pen ? T('pen') + ' +' + G.pen + ' s' : '';
+  $('hPen').textContent = G.pen ? T('pen') + ' +' + Math.round(G.pen * clockK()) + ' s' : '';
   $('hInfo').textContent = Math.min(COURSE, Math.max(0, Math.round(d))) + ' / ' + COURSE + ' m · ' + Math.round(G.v*3.6) + ' km/h · ' + Math.round(gradeAt(G.z)*100) + '%';
   $('eBar').style.width = G.E.toFixed(1) + '%';
   $('eBar').style.opacity = G.E < 15 ? (0.5 + 0.5*Math.sin(G.t*14)) : 1;
