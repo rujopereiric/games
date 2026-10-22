@@ -1145,9 +1145,9 @@ $('tp').addEventListener('pointerdown', e => { e.preventDefault(); $('tp').class
 function enableTouch(){ if (touchMode) return; touchMode = true; document.body.classList.add('touchmode'); if (G.state === 'race' || G.state === 'count') $('touch').classList.add('on'); }
 window.addEventListener('touchstart', enableTouch, {passive:true});
 // iOS Safari ignores user-scalable=no, so fast pedal taps would double-tap zoom: swallow the second
-// touchend of a quick pair and block pinch gestures
+// touchend of a quick pair (not on buttons, whose click would be lost) and block pinch gestures
 let lastTouchEnd = 0;
-document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTouchEnd < 350) e.preventDefault(); lastTouchEnd = now; }, {passive:false});
+document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTouchEnd < 350 && !e.target.closest('button')) e.preventDefault(); lastTouchEnd = now; }, {passive:false});
 ['gesturestart','gesturechange','gestureend','dblclick'].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), {passive:false}));
 if (window.matchMedia && matchMedia('(pointer:coarse)').matches) enableTouch();
 
