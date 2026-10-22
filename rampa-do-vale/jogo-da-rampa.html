@@ -9,7 +9,7 @@
   --ink:#1d2433; --paper:#fff8ec; --accent:#d62839; --gold:#f2b134; --green:#2a9d8f; --blue:#264f9e;
   --hud-bg:rgba(255,248,236,.92);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;touch-action:manipulation}
 html,body{margin:0;height:100%;overflow:hidden;background:#8fc1e8;color:var(--ink);
   font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
@@ -1144,6 +1144,11 @@ $('tp').addEventListener('pointerdown', e => { e.preventDefault(); $('tp').class
 ['pointerup','pointercancel','pointerleave'].forEach(ev => $('tp').addEventListener(ev, () => $('tp').classList.remove('down')));
 function enableTouch(){ if (touchMode) return; touchMode = true; document.body.classList.add('touchmode'); if (G.state === 'race' || G.state === 'count') $('touch').classList.add('on'); }
 window.addEventListener('touchstart', enableTouch, {passive:true});
+// iOS Safari ignores user-scalable=no, so fast pedal taps would double-tap zoom: swallow the second
+// touchend of a quick pair and block pinch gestures
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTouchEnd < 350) e.preventDefault(); lastTouchEnd = now; }, {passive:false});
+['gesturestart','gesturechange','gestureend','dblclick'].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), {passive:false}));
 if (window.matchMedia && matchMedia('(pointer:coarse)').matches) enableTouch();
 
 function pause(){ if (G.state !== 'race' && G.state !== 'count') return; G.prev = G.state; G.state = 'pause'; show('sPause'); if (AC) AC.suspend(); }
