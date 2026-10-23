@@ -370,7 +370,7 @@ const VPAL = { W: '#f3eee2', s: '#d2cab6' };
 
 /* ================= cities (from reporting on each square) ================= */
 const CITIES = [
-  { name: 'Porto', place: 'Praça D. João I', ground: 'granite', police: 1.0, patrols: false, helmets: true, cleaners: true, tag: 'Capacetes azuis e a equipa de limpeza',
+  { name: 'Porto', place: 'Praça D. João I', ground: 'granite', police: 1.0, patrols: false, helmets: true, cleaners: true, artists: ['Clã', 'Capicua'], tag: 'Capacetes azuis e a equipa de limpeza',
     intro: '10 de outubro. A primeira acampada monta-se entre o Rivoli e o Palácio Atlântico. Os capacetes azuis vão para quem segura a frente do cordão, e uma equipa varre a praça para a polícia não ter desculpas.',
     clear: 'O Porto aguentou as noites. No sábado, às 17:00, começam a chegar tendas ao Rossio.',
     blocks: [[2, 4], [7, 4]],
@@ -378,7 +378,9 @@ const CITIES = [
     L: [{ a: 0, b: 5.5, h: 58, style: 'rivoli', roof: '#a99c80' }, { a: 5.5, b: 10, h: 42, style: 'pombal', col: '#9fb7cf', neon: '#57ffb0' }],
     R: [{ a: 0, b: 6.5, h: 52, style: 'atlantico', roof: '#b8ad94' }, { a: 6.5, b: 10, h: 40, style: 'pombal', col: '#e3b54b', neon: '#ff5fc8' }],
     C: { h: 96, style: 'rialto', roof: '#b0a588' } },
-  { name: 'Lisboa', place: 'Rossio', ground: 'waves', police: 1.12, patrols: false, donkey: true, dj: true, tag: 'O DJ p.45 e a cabeça de burro',
+  { name: 'Lisboa', place: 'Rossio', ground: 'waves', police: 1.12, patrols: false, donkey: true, dj: true, choir: true,
+    // artists who played, or were announced, at the Rossio acampada (October 2026)
+    artists: ['B Fachada', 'Maria Reis', 'Ana Moura', 'Sérgio Godinho', 'Nenny', 'Tim', 'Dino d’Santiago', 'Samuel Úria', 'Gaspar Varela', 'Expresso Transatlântico'], tag: 'O DJ p.45 e a cabeça de burro',
     intro: 'Sábado, 17:00. As chaves tilintam no ar e as tendas rodeiam a coluna de D. Pedro IV. Alguém pendura uma pequena cabeça de burro debaixo da placa, e algures na multidão o DJ p.45 está a aquecer. A seguir: Não temos casa, ficam as tendas! Sábado, 24 de outubro, 15:00, do Marquês do Pombal ao Rossio.',
     clear: 'O Rossio tornou-se uma pequena aldeia. Coimbra convoca uma assembleia na Praça 8 de Maio.',
     blocks: [[4, 4], [5, 4], [4, 5], [5, 5], [4, 1], [5, 1], [4, 8], [5, 8]],
@@ -679,8 +681,8 @@ function newLevel() {
     chainCd: 0, live: 0, liveCd: 0, asmCd: 20, perks: new Set(),
     raid: false, raidT: 0, raidDetained: 0, warned: false,
     nextRaid: 30, nextPatrol: 38, nextLimit: 24.5,
-    arrivalT: 1, crateT: 5, leaveT: 3, kitchenT: 14, bikeT: rnd(45, 70), releaseT: 0, releaseN: 0,
-    donkey: city.donkey ? 'small' : null, dj: null, djT: city.dj ? 35 : -1, helmets: 0, hcrate: null, helmetT: city.helmets ? 25 : -1, cleaners: null, swept: false, drums: null, drumT: city.drums ? 40 : -1, freeze: 0, singCd: 0, rally: false, tandemT: 0, tip: null, tipT: 0,
+    arrivalT: 1, crateT: 5, leaveT: 3, kitchenT: 14, releaseT: 0, releaseN: 0,
+    donkey: city.donkey ? 'small' : null, dj: null, djT: city.dj ? 35 : -1, helmets: 0, hcrate: null, helmetT: city.helmets ? 25 : -1, cleaners: null, swept: false, drums: null, drumT: city.drums ? 40 : -1, freeze: 0, singCd: 0, choir: null, choirDay: -1, artist: city.artists ? ri(0, city.artists.length - 1) : 0, rally: false, tandemT: 0, tip: null, tipT: 0,
     player: { gx: 6.5, gy: 8.6, tx: 6.5, ty: 8.6, step: 0, moving: false, flip: false, back: false } };
   for (const [a, b] of city.blocks) S.occ[b * N + a] = 'X';
   bg = makeBG(city);
@@ -847,17 +849,20 @@ function contextAction() {
     if (gd(p, st) > 1.25) continue;
     const cd = st.cd > 0 ? ' ' + Math.ceil(st.cd) + 's' : '';
     if (st.k === 'kitchen') return { label: 'Cozinhar uma refeição, 1 material' + cd, ok: st.cd <= 0 && S.supplies > 0, fn: () => { S.supplies--; S.morale = Math.min(100, S.morale + 15); S.support = Math.min(100, S.support + 2); st.cd = 5; steam(st, 10); float(st.gx, st.gy, 'Refeição servida', '#ffd36b', 24); sfx('crate'); } };
-    if (st.k === 'stage') return { label: (S.concert ? 'Concerto a decorrer' : 'Dar um concerto') + cd, ok: st.cd <= 0 && !S.concert, fn: () => startConcert(st) };
+    if (st.k === 'stage') { const a = artistNow(); return { label: (S.concert ? (S.concert.name ? S.concert.name + ' a tocar' : 'Concerto a decorrer') : a ? 'Concerto ' + a : 'Dar um concerto') + cd, ok: st.cd <= 0 && !S.concert, fn: () => startConcert(st) }; }
     if (st.k === 'info') return { label: 'Conversa de boas-vindas' + cd, ok: st.cd <= 0, fn: () => { st.cd = 30; let n = 0; for (const a of S.arrivals) if (a.state !== 'leave') { a.gone = true; joinOne(a.gx, a.gy); n++; } float(st.gx, st.gy, n ? fmt(n * crowdMult()) + ' juntaram-se' : 'Ninguém à espera', '#9ff0ff', 26); } };
     if (st.k === 'aid') return { label: 'Turno de descanso' + cd, ok: st.cd <= 0, fn: () => { st.cd = 25; S.morale = Math.min(100, S.morale + 10); float(st.gx, st.gy, 'Descansados', '#b6ff3b', 24); } };
   }
   return null;
 }
 function steam(st, n) { const p = iso(st.gx, st.gy, 14); for (let i = 0; i < n; i++) S.parts.push({ x: p.x + rnd(-2, 2), y: p.y, vx: rnd(-3, 3), vy: rnd(-14, -8), life: rnd(.8, 1.4), type: 'steam', col: '#ffffff' }); }
+// the stage rotates through the artists who played in this square
+const artistNow = () => S.city.artists ? S.city.artists[S.artist % S.city.artists.length] : null;
 function startConcert(st) {
-  st.cd = 50; S.concert = { t: 14, st, spawn: 0 };
+  const name = artistNow(); S.artist++;
+  st.cd = 50; S.concert = { t: 14, st, spawn: 0, name };
   S.support = Math.min(100, S.support + 8); S.pressure = Math.min(100, S.pressure + 5); S.morale = Math.min(100, S.morale + 12);
-  float(st.gx, st.gy, 'Concerto!', '#ff5fc8', 34); sfx('concert');
+  float(st.gx, st.gy, name ? name + '!' : 'Concerto!', '#ff5fc8', 34); sfx('concert');
 }
 function startBikes() {
   const n = ri(8, 12), riders = [];
@@ -873,6 +878,7 @@ function bikePos(s) {
 function startRaid(patrol) {
   S.raid = true; S.raidT = 0; S.raidDetained = 0; S.warned = false;
   S.van = { gx: -4, gy: 11.15, tx: rnd(2, 6), state: 'arrive', patrol };
+  if (!patrol && !S.bikes && S.support >= 12 && Math.random() < .7) { startBikes(); const c = iso(5, 10, 20); floatXY(c.x, c.y - 42, 'Contra a rusga!', '#39e1ff'); }
 }
 function onRaidEnd() {
   S.swept = false;
@@ -886,7 +892,14 @@ function sing() {
   // the police stay frozen for as long as the song plays (10 s if there is no sound); the next sing-along is 60 s after it ends
   S.freeze = song ? songEnd - song.pos : 10; S.singCd = S.freeze + 60;
   S.support = Math.min(100, S.support + 8); S.morale = Math.min(100, S.morale + 8); S.pressure = Math.min(100, S.pressure + 3);
-  const q = iso(5, 5, 40); floatXY(q.x, q.y, 'Grândola, Vila Morena', '#ffd36b');
+  const ch = S.choir, q = iso(5, 5, 40);
+  if (!ch || ch.state === 'go') floatXY(q.x, q.y, 'Grândola, Vila Morena', '#ffd36b'); // with the choir, their bubble carries the words
+  // with the Coro da Achada in the square, the whole choir joins in: much more pressure, and they stay until the song ends
+  if (ch && ch.state !== 'go') {
+    ch.state = 'sing'; ch.grandola = true; ch.until = Math.max(ch.until, ch.t + S.freeze + 1);
+    S.pressure = Math.min(100, S.pressure + 10); S.support = Math.min(100, S.support + 4);
+    floatXY(128, 34, 'Com o Coro da Achada!', '#ff8aa8'); sparkle(ch.cx, ch.cy, 16, 16);
+  }
 }
 function updEvents(dt, hr) {
   const p = S.player, c = S.city;
@@ -989,7 +1002,7 @@ function endParty() {
 }
 function updDJ(dt) {
   if (!S.city.dj) return;
-  if (!S.dj) { if (S.djT > 0) { S.djT -= dt; if (S.djT <= 0) spawnDJ(); } return; }
+  if (!S.dj) { if (S.djT > 0) { S.djT -= dt; if (S.djT <= 0) { if (S.choir || S.tandem || choirSoon()) S.djT = 4; else spawnDJ(); } } return; }
   const d = S.dj; d.t += dt; d.beat -= dt;
   const busy = d.state === 'conga' || d.state === 'party';
   if (d.beat <= 0) {
@@ -1026,7 +1039,7 @@ function updDJ(dt) {
     if (Math.random() < dt * 3) sparkle(rnd(FLOOR.x0, FLOOR.x1), rnd(FLOOR.y0, FLOOR.y1), 2, 4);
     if (d.pt <= 0) endParty();
   } else if (d.state === 'leave') {
-    if (moveEnt(d, d.tx, d.ty, 1.2, dt, true)) { S.dj = null; S.djT = rnd(110, 150); }
+    if (moveEnt(d, d.tx, d.ty, S.choir ? 3 : 1.2, dt, true)) { S.dj = null; S.djT = rnd(110, 150); } // hurries off when the choir arrives
   }
 }
 function drawDJ(d) {
@@ -1052,6 +1065,99 @@ function drawDancer(f, i) {
   const b = ph % 2;
   guy(x, y - b, { ...L, moving: b === 0, step: ph, flip: ph > 1, back: false });
   if (f.dance === 'arms') { R(x - 4, y - 15 - b - (ph % 2), 1, 5, L.skin); R(x + 4, y - 15 - b - ((ph + 1) % 2), 1, 5, L.skin); }
+}
+
+/* ================= Coro da Achada (Lisboa) ================= */
+// the open choir of the Casa da Achada rehearses every day at 18:00: campers come out of their tents,
+// stand in a circle and sing "Acordai" (Lopes-Graça); passers-by join in. Lisboa has a lot going on,
+// so the DJ, the choir and the donkey tandem never share the square.
+const CHOIR_HOUR = 18, CHOIR_LATE = 23, CHOIR_LEN = 16, CHOIR_R = .95;
+const CHOIR_CHORDS = [[220, 262, 330], [175, 220, 262], [196, 247, 294], [165, 208, 247]];
+const choirDay = () => Math.floor((S.clock - 6) / 24);
+// true in the hours before today's rehearsal, so the DJ doesn't start something it can't finish
+function choirSoon() { if (!S.city.choir || S.choirDay === choirDay()) return false; const hr = S.clock % 24; return hr >= CHOIR_HOUR - 6 && hr < CHOIR_LATE; }
+function choirSpot() {
+  let best = null, bd = 1e9;
+  for (const strict of [true, false]) {
+    for (let gx = 1.5; gx <= 8.5; gx += .5) for (let gy = 1.5; gy <= 8.5; gy += .5) {
+      let ok = !blockedAt(gx, gy);
+      for (let k = 0; k < 10 && ok; k++) { const a = k / 10 * Math.PI * 2, x = gx + Math.cos(a) * CHOIR_R, y = gy + Math.sin(a) * CHOIR_R; if (blockedAt(x, y) || (strict && S.occ[idx(x, y)])) ok = false; }
+      const d = Math.hypot(gx - 5, gy - 6.5) + Math.random() * .4; // close to the column, so Grândola can be called from there
+      if (ok && d < bd) { bd = d; best = [gx, gy]; }
+    }
+    if (best) return best;
+  }
+  return null;
+}
+function startChoir() {
+  const spot = choirSpot(); if (!spot || !S.tents.length) return false;
+  const n = clamp(S.tents.length + 2, 5, 8), members = [];
+  for (let i = 0; i < n; i++) { const t = pick(S.tents); members.push({ gx: t.gx, gy: t.gy + .3, home: t, a: i / n * Math.PI * 2 + .3, look: look(false), step: 0, flip: false, back: false }); }
+  S.choir = { cx: spot[0], cy: spot[1], state: 'gather', t: 0, until: CHOIR_LEN, members, beat: 0, chord: 0, spawn: 2, line: 0, grandola: false };
+  const q = iso(spot[0], spot[1], 34); floatXY(q.x, q.y, 'Coro da Achada: ensaio aberto', '#ffd36b');
+  return true;
+}
+function updChoir(dt, hr) {
+  if (!S.city.choir) return;
+  if (!S.choir) {
+    const due = hr >= CHOIR_HOUR && hr < CHOIR_LATE && S.choirDay !== choirDay();
+    if (!due) return; // a raid doesn't stop the rehearsal
+    // the rehearsal has priority: a DJ who is only wandering makes room; a conga or a party is allowed to finish
+    if (S.dj && S.dj.state === 'wander') { S.dj.state = 'leave'; S.dj.tx = N + 2; S.dj.ty = S.dj.gy; }
+    if ((!S.dj || S.dj.state === 'leave') && !S.tandem && startChoir()) S.choirDay = choirDay();
+    return;
+  }
+  const c = S.choir;
+  if (c.grandola && !song && S.freeze <= 0) c.grandola = false;
+  if (c.state === 'gather') {
+    c.t += dt; let all = true;
+    for (const m of c.members) { if (!moveEnt(m, c.cx + Math.cos(m.a) * CHOIR_R, c.cy + Math.sin(m.a) * CHOIR_R, 1.4, dt)) all = false; }
+    if (all || c.t > 9) { c.state = 'sing'; c.t = 0; S.morale = Math.min(100, S.morale + 6); }
+  } else if (c.state === 'sing') {
+    c.t += dt;
+    for (const m of c.members) { if (moveEnt(m, c.cx + Math.cos(m.a) * CHOIR_R, c.cy + Math.sin(m.a) * CHOIR_R, 1.4, dt)) { m.moving = false; face(m, c.cx - m.gx, c.cy - m.gy); } }
+    c.beat -= dt;
+    if (c.beat <= 0) {
+      c.beat = 1.6;
+      if (!song && gd(S.player, { gx: c.cx, gy: c.cy }) < 6) { const ch = CHOIR_CHORDS[c.chord++ % CHOIR_CHORDS.length]; ch.forEach((f, i) => tone(f, 1.5, i ? 'sine' : 'triangle', .026, i * .04)); }
+      c.line++;
+    }
+    if (Math.random() < dt * 5) { const m = pick(c.members), q = iso(m.gx, m.gy, 17); S.parts.push({ x: q.x, y: q.y, vx: rnd(-4, 4), vy: -13, life: 1.1, type: 'note', col: pick(['#ffffff', '#ffd36b', '#ff8aa8']) }); }
+    // an open choir: whoever passes by joins the rehearsal, and the camp
+    for (const a of S.arrivals) if (a.state !== 'leave' && Math.hypot(a.gx - c.cx, a.gy - c.cy) < 1.9) { a.gone = true; joinOne(a.gx, a.gy); }
+    c.spawn -= dt; if (c.spawn <= 0 && c.t < c.until - 3) { c.spawn = 2.6; spawnArrival({ auto: true, target: [clamp(c.cx + rnd(-1.6, 1.6), .4, 9.6), clamp(c.cy + rnd(-1.6, 1.6), .4, 9.6)] }); }
+    S.morale = Math.min(100, S.morale + dt * 1.1); S.support = Math.min(100, S.support + dt * .3);
+    if (c.t >= c.until) { c.state = 'go'; c.grandola = false; }
+  } else {
+    // back to their own tents (or the nearest one, if the police took it)
+    let all = true;
+    for (const m of c.members) {
+      if (m.done) continue;
+      if (!S.tents.includes(m.home)) m.home = nearestTent(m, false);
+      if (!m.home || moveEnt(m, m.home.gx, m.home.gy + .3, 1.3, dt)) m.done = true; else all = false;
+    }
+    if (all) S.choir = null;
+  }
+}
+function drawChorister(m, c) {
+  if (m.done) return;
+  const q = iso(m.gx, m.gy), x = Math.round(q.x), y = Math.round(q.y), singing = c.state === 'sing';
+  const bob = singing && (Math.floor(S.t * 3 + m.a * 2) % 2) ? 1 : 0;
+  guy(x, y - bob, { ...m.look, moving: m.moving, step: m.step, flip: m.flip, back: m.back });
+  if (!m.back) { R(x - 2, y - 8 - bob, 5, 3, '#b02a22'); R(x - 2, y - 8 - bob, 5, 1, '#d8473d'); if (singing) R(x, y - 11 - bob, 1, 1, '#5a1414'); }
+}
+function drawBubble(x, y, lines) {
+  ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const T = lines.map(l => l.toUpperCase()), w = Math.ceil(Math.max(...T.map(t => ctx.measureText(t).width))) + 8, h = T.length * 9 + 3;
+  const bx = clamp(Math.round(x - w / 2), 1, W - w - 1), by = Math.round(y - h - 4), tx = clamp(Math.round(x), bx + 3, bx + w - 4);
+  R(bx - 1, by - 1, w + 2, h + 2, '#0b0a0a'); R(bx, by, w, h, '#ffffff');
+  R(tx - 2, by + h, 5, 1, '#ffffff'); R(tx - 1, by + h + 1, 3, 1, '#ffffff'); R(tx, by + h + 2, 1, 1, '#ffffff'); R(tx - 3, by + h, 1, 1, '#0b0a0a'); R(tx + 3, by + h, 1, 1, '#0b0a0a');
+  ctx.fillStyle = '#8b2320'; T.forEach((t, i) => ctx.fillText(t, bx + w / 2, by + 6 + i * 9));
+}
+function drawChoirBubble() {
+  const c = S.choir; if (!c || c.state !== 'sing') return;
+  const q = iso(c.cx, c.cy, 26);
+  drawBubble(q.x, q.y + (Math.floor(S.t * 2) % 2), c.grandola ? ['Grândola Vila Morena', 'Terra da Fraternidade'] : [c.line % 2 ? 'Acordai, acordai!' : 'Acordai!']);
 }
 
 /* ================= update ================= */
@@ -1118,8 +1224,7 @@ function update(dt) {
   }
 
   // bikes
-  S.bikeT -= dt;
-  if (S.bikeT <= 0 && !S.bikes) { if (S.support >= 12) startBikes(); S.bikeT = rnd(65, 100); }
+  // bicicletadas ride in to meet the dawn raid and hold up the van (see startRaid)
   if (S.bikes) {
     S.bikes.t += dt;
     for (const r of S.bikes.riders) { r.s += dt * .55; const [x, y] = bikePos(r.s); const dx = x - r.gx, dy = y - r.gy; if (Math.abs(dx - dy) > .001) r.flip = (dx - dy) < 0; r.gx = x; r.gy = y; }
@@ -1127,7 +1232,7 @@ function update(dt) {
   }
 
   // donkey tandem (Lisboa)
-  if (S.tandemT > 0) { S.tandemT -= dt; if (S.tandemT <= 0) { S.tandem = { gx: -3, gy: 11.2, wp: [[4.5, 11.2], [5.5, 10.5]], state: 'in', cargo: true, step: 0, flip: false }; const c = iso(3, 11, 20); floatXY(c.x, c.y, 'Vem aí um tandem…', '#ffd36b'); } }
+  if (S.tandemT > 0) { S.tandemT -= dt; if (S.tandemT <= 0 && (S.dj || S.choir)) S.tandemT = 3; else if (S.tandemT <= 0) { S.tandem = { gx: -3, gy: 11.2, wp: [[4.5, 11.2], [5.5, 10.5]], state: 'in', cargo: true, step: 0, flip: false }; const c = iso(3, 11, 20); floatXY(c.x, c.y, 'Vem aí um tandem…', '#ffd36b'); } }
   if (S.tandem) {
     const t = S.tandem;
     if ((t.state === 'in' || t.state === 'leave') && t.wp.length) { const w = t.wp[0]; if (moveEnt(t, w[0], w[1], 2.2, dt, true)) { t.wp.shift(); if (!t.wp.length) { if (t.state === 'in') { t.state = 'wait'; t.waitT = 20; } else S.tandem = null; } } }
@@ -1193,6 +1298,7 @@ function update(dt) {
   }
 
   updDJ(dt);
+  updChoir(dt, hr);
   updEvents(dt, hr);
 
   // meters
@@ -1406,6 +1512,7 @@ function draw() {
 
   if (S.chain) { const c = S.chain, q = iso(c.gx, c.gy); ctx.fillStyle = 'rgba(57,225,255,.18)'; ctx.beginPath(); ctx.ellipse(q.x, q.y, c.r * TW * 1.414, c.r * TH * 1.414, 0, 0, Math.PI * 2); ctx.fill(); }
 
+  if (S.choir && S.choir.state === 'sing') { const c = S.choir, q = iso(c.cx, c.cy); ctx.fillStyle = c.grandola ? 'rgba(255,59,78,.22)' : 'rgba(255,211,107,.2)'; ctx.beginPath(); ctx.ellipse(q.x, q.y, (CHOIR_R + .45) * TW * 1.414, (CHOIR_R + .45) * TH * 1.414, 0, 0, Math.PI * 2); ctx.fill(); }
   if (S.dj && S.dj.state === 'party') { const st = .45; for (let a = FLOOR.x0; a < FLOOR.x1 - .01; a += st) for (let b = FLOOR.y0; b < FLOOR.y1 - .01; b += st) { const c = ['#ff5fc8', '#39e1ff', '#b6ff3b', '#ffd36b'][(Math.floor((a + b) / st + S.t * 4)) % 4]; box(ctx, a, b, a + st, b + st, 0, 1, c, shade(c, .7), shade(c, .55)); } }
   const list = [];
   const add = (gx, gy, f) => list.push({ k: gx + gy, f });
@@ -1427,6 +1534,7 @@ function draw() {
   if (S.hcrate) add(S.hcrate.gx, S.hcrate.gy, () => drawHCrate(S.hcrate));
   if (S.cleaners) S.cleaners.crew.forEach(m => add(m.gx, m.gy, () => drawSweeper(m)));
   if (S.drums) S.drums.crew.forEach(m => add(m.gx, m.gy, () => drawDrummer(m)));
+  if (S.choir) { const c = S.choir; c.members.forEach(m => add(m.gx, m.gy, () => drawChorister(m, c))); }
   if (S.dj) { const d = S.dj; add(d.gx, d.gy, () => drawDJ(d)); d.followers.forEach((f, i) => add(f.gx, f.gy, () => drawDancer(f, i))); d.recruits.forEach((f, i) => add(f.gx, f.gy, () => drawDancer(f, i))); }
   list.sort((a, b) => a.k - b.k).forEach(o => o.f());
 
@@ -1451,6 +1559,7 @@ function draw() {
     else { ctx.globalAlpha = Math.min(.7, q.life); R(q.x, q.y, 2, 2, '#ffffff'); }
   }
   ctx.globalAlpha = 1;
+  drawChoirBubble();
   for (const f of S.floats) drawFloat(f);
 
   if (mode === 'play') {

@@ -23,6 +23,12 @@ Fill the pressure bar to hold a square. Hold all five to win.
 The game is entirely in Portuguese. On a computer the game scales up to fill the window,
 and the ⛶ button (or F) switches to full screen.
 
+In Lisboa, the Coro da Achada (the open choir of the Casa da Achada) holds its rehearsal every day at 18:00:
+campers come out of their tents, stand in a circle and sing *Acordai*, and passers-by join the camp. Singing
+*Grândola* while the choir is there adds much more pressure. The DJ, the choir and the donkey tandem take turns
+in the square, and the stage rotates through artists who played at the Rossio and Porto acampadas.
+Bicicletadas ride in with the dawn raid and hold up the police van.
+
 In every square, once the crowd is big enough, gather in the centre and sing *Grândola, Vila Morena*:
 the police freeze for 30 seconds while Rui's own MIDI arrangement (0:06–0:43, sped up to fit 30 s) plays on the game's built-in synth.
 
