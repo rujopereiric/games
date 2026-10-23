@@ -1069,10 +1069,48 @@ function drawDancer(f, i) {
 
 /* ================= Coro da Achada (Lisboa) ================= */
 // the open choir of the Casa da Achada rehearses every day at 18:00: campers come out of their tents,
-// stand in a circle and sing "Acordai" (Lopes-Graça); passers-by join in. Lisboa has a lot going on,
+// stand in a circle and sing "A semana sangrenta"; passers-by join in. Lisboa has a lot going on,
 // so the DJ, the choir and the donkey tandem never share the square.
-const CHOIR_HOUR = 18, CHOIR_LATE = 23, CHOIR_LEN = 16, CHOIR_R = .95;
-const CHOIR_CHORDS = [[220, 262, 330], [175, 220, 262], [196, 247, 294], [165, 208, 247]];
+// "A semana sangrenta", the Coro da Achada's Portuguese version of "La Semaine sanglante" (words Jean-Baptiste
+// Clément, 1871; tune Pierre Dupont). Transcribed from the SATB arrangement of the Chorale anarchiste de Lausanne
+// (lachorale.ch): pickup + 25 bars, F minor, 4/4. Each voice is [midi, beats] pairs, 0 = rest.
+const SEMANA = {
+  bpm: 104,
+  v: {
+    s: [65, .5, 67, .5, 68, .5, 65, 2, 0, .5, 65, .5, 67, .5, 68, .5, 65, 1, 65, 1, 0, .5, 65, .5, 67, .5, 68, .5, 65, 2, 0, .5, 65, .5, 67, .5, 68, .5, 65, 2, 0, .5, 65, .5, 67, .5, 68, .5, 70, 2.5, 70, .5, 68, .5, 70, .5, 72, 1, 67, 1, 0, .5, 67, .5, 68, .5, 70, .5, 72, 1, 72, 1, 70, 1, 68, 1, 67, 2, 0, .5, 72, .5, 72, .5, 72, .5, 72, 2.5, 70, .5, 68, .5, 70, .5, 72, 1, 72, 1, 0, .5, 72, .5, 72, .5, 72, .5, 72, 2.5, 70, .5, 68, .5, 70, .5, 72, 1, 0, 1.5, 72, .5, 70, .5, 68, .5, 67, 1, 70, 1, 68, 1.5, 67, .5, 65, 1, 65, 1, 0, .5, 68, .5, 67, .5, 65, .5, 64, .5, 65, .5, 67, .5, 68, .5, 65, 1, 0, .5, 72, .5, 72, 2.5, 70, .5, 68, .5, 70, .5, 72, 1, 68, 1, 65, .5, 65, .5, 67, .5, 68, .5, 60, 3, 64, .5, 67, .5, 65, 3, 0, .5, 72, .5, 72, 2.5, 70, .5, 68, .5, 70, .5, 72, 1, 68, 1, 65, .5, 65, .5, 67, .5, 68, .5, 70, 2.5, 70, .5, 68, .5, 70, .5, 72, 2, 77, 1, 0, 1, 72, 1, 73, .5, 72, .5, 70, .5, 68, .5, 67, .5, 68, .5, 65, 2, 0, 2],
+    a: [60, .5, 60, .5, 60, .5, 60, 1, 60, 1, 0, .5, 61, .5, 63, .5, 61, .5, 60, 1, 60, 1, 0, .5, 60, .5, 60, .5, 60, .5, 60, 1, 60, 1, 0, .5, 61, .5, 63, .5, 61, .5, 60, 2, 0, .5, 60, .5, 60, .5, 60, .5, 65, 2.5, 65, .5, 65, .5, 65, .5, 64, 1, 64, 1, 0, .5, 64, .5, 65, .5, 67, .5, 65, 1, 65, 1, 67, 1, 65, 1, 64, 2, 0, .5, 68, .5, 68, .5, 68, .5, 68, 2.5, 63, .5, 63, .5, 63, .5, 68, 1, 68, 1, 0, .5, 68, .5, 68, .5, 68, .5, 68, 2.5, 63, .5, 63, .5, 63, .5, 68, 1, 0, 1.5, 65, .5, 65, .5, 65, .5, 64, 1, 67, 1, 65, 1.5, 64, .5, 61, 1, 61, 1, 0, .5, 65, .5, 63, .5, 61, .5, 60, .5, 62, .5, 64, .5, 60, .5, 60, 1, 0, .5, 68, .5, 68, 2.5, 63, .5, 63, .5, 63, .5, 68, 1, 68, 1, 65, .5, 65, .5, 67, .5, 68, .5, 60, 3, 60, .5, 64, .5, 60, 3, 0, .5, 68, .5, 68, 2.5, 63, .5, 63, .5, 63, .5, 68, 1, 68, 1, 65, .5, 65, .5, 67, .5, 68, .5, 65, 2.5, 65, .5, 65, .5, 65, .5, 70, 2, 68, 1, 0, 1, 65, 1, 65, .5, 65, .5, 67, .5, 65, .5, 64, .5, 64, .5, 60, 2, 0, 2],
+    t: [56, .5, 58, .5, 60, .5, 56, 1, 56, 1, 0, .5, 58, .5, 58, .5, 58, .5, 56, 1, 56, 1, 0, .5, 56, .5, 58, .5, 60, .5, 56, 1, 56, 1, 0, .5, 58, .5, 58, .5, 58, .5, 56, 2, 0, .5, 56, .5, 58, .5, 60, .5, 61, 2.5, 61, .5, 60, .5, 61, .5, 60, 1, 60, 1, 0, .5, 60, .5, 58, .5, 60, .5, 56, 1, 60, 1, 61, 1, 62, 1, 60, 2, 0, .5, 63, .5, 63, .5, 63, .5, 63, 2.5, 61, .5, 60, .5, 61, .5, 63, 1, 63, 1, 0, .5, 63, .5, 63, .5, 63, .5, 63, 2.5, 61, .5, 60, .5, 61, .5, 63, 1, 0, 1.5, 60, .5, 60, .5, 60, .5, 60, 1, 60, 1, 60, 1.5, 60, .5, 56, 1, 56, 1, 0, .5, 56, .5, 56, .5, 56, .5, 55, .5, 55, .5, 58, .5, 58, .5, 56, 1, 0, .5, 63, .5, 63, 2.5, 61, .5, 60, .5, 61, .5, 63, 1, 65, 1, 53, .5, 53, .5, 55, .5, 56, .5, 60, 3, 58, .5, 58, .5, 56, 3, 0, .5, 63, .5, 63, 2.5, 61, .5, 60, .5, 61, .5, 63, 1, 63, 1, 53, .5, 53, .5, 55, .5, 56, .5, 61, 2.5, 61, .5, 60, .5, 61, .5, 64, 2, 60, 1, 0, 1, 65, 1, 65, .5, 63, .5, 61, .5, 60, .5, 58, .5, 58, .5, 56, 2, 0, 2],
+    b: [53, .5, 53, .5, 53, .5, 53, 1, 53, 1, 0, .5, 53, .5, 53, .5, 53, .5, 53, 1, 53, 1, 0, .5, 53, .5, 53, .5, 53, .5, 53, 1, 53, 1, 0, .5, 53, .5, 53, .5, 53, .5, 53, 2, 0, .5, 53, .5, 53, .5, 53, .5, 46, 2.5, 46, .5, 46, .5, 46, .5, 48, 1, 48, 1, 0, .5, 48, .5, 50, .5, 52, .5, 53, 1, 56, 1, 58, 1, 58, 1, 48, 2, 0, .5, 56, .5, 56, .5, 56, .5, 56, 2.5, 56, .5, 56, .5, 56, .5, 56, 1, 56, 1, 0, .5, 56, .5, 56, .5, 56, .5, 56, 2.5, 56, .5, 56, .5, 56, .5, 56, 1, 0, 1.5, 56, .5, 55, .5, 53, .5, 48, 1, 48, 1, 48, 1.5, 48, .5, 49, 1, 49, 1, 0, .5, 49, .5, 49, .5, 49, .5, 48, .5, 48, .5, 50, .5, 52, .5, 53, 1, 0, .5, 44, .5, 44, 2.5, 44, .5, 44, .5, 44, .5, 48, 1, 53, 1, 53, .5, 53, .5, 55, .5, 56, .5, 48, 3, 48, .5, 48, .5, 53, 3, 0, .5, 44, .5, 44, 2.5, 44, .5, 44, .5, 44, .5, 44, 1, 48, 1, 53, .5, 53, .5, 55, .5, 56, .5, 46, 2.5, 46, .5, 46, .5, 46, .5, 48, 2, 53, 1, 0, 1, 44, 1, 46, .5, 46, .5, 48, .5, 48, .5, 48, .5, 48, .5, 53, 2, 0, 2]
+  }
+};
+// the rehearsal sings the refrain, from "Sim, mas..." (beat 61) to the end; each bubble line starts at a beat
+const SEMANA_FROM = 61, SEMANA_LINES = [[0, 'Sim, mas... a terra treme'], [69.5, 'Os dias maus vão acabar'], [77.5, 'O contra-ataque não se teme'], [85.5, 'Se toda a gente se juntar']];
+const CHOIR_GAIN = { s: 1, a: .75, t: .7, b: .9 };
+const semanaNotes = from => { const out = [], k = 60 / SEMANA.bpm; for (const [v, seq] of Object.entries(SEMANA.v)) { let b = 0; for (let i = 0; i < seq.length; i += 2) { const [m, d] = [seq[i], seq[i + 1]]; if (m && b >= from) out.push([(b - from) * k, d * k, m, v]); b += d; } } return out.sort((x, y) => x[0] - y[0]); };
+const CHOIR_NOTES = semanaNotes(SEMANA_FROM);
+const CHOIR_SONG_LEN = (SEMANA.v.s.reduce((t, x, i) => i % 2 ? t + x : t, 0) - SEMANA_FROM) * 60 / SEMANA.bpm;
+// a soft "ah": sawtooth through a low-pass, with a slow vibrato
+function choirNote(ac, dest, t0, n) {
+  const [, du, m, k] = n, o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+  o.type = 'sawtooth'; o.frequency.value = 440 * 2 ** ((m - 69) / 12);
+  f.type = 'lowpass'; f.frequency.value = k === 'b' ? 700 : 1300; f.Q.value = 1.2;
+  lfo.frequency.value = 5 + Math.random(); lg.gain.value = 7; lfo.connect(lg).connect(o.detune);
+  const peak = .05 * CHOIR_GAIN[k], a = Math.min(.06, du / 3), end = t0 + du * .9;
+  g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(peak, t0 + a); g.gain.setValueAtTime(peak * .85, Math.max(t0 + a, end - .04)); g.gain.linearRampToValueAtTime(0, end + .1);
+  o.connect(f).connect(g).connect(dest); o.start(t0); lfo.start(t0); o.stop(end + .12); lfo.stop(end + .12);
+}
+// called every frame: plays the choir's song while it rehearses; holds its place on pause, and gives way to Grândola
+function choirTick() {
+  const c = S && S.choir, on = c && c.state === 'sing' && mode === 'play' && !song && actx && !muted;
+  if (!c || !c.mus) return;
+  const m = c.mus;
+  if (!on) { if (m.out) { const o = m.out; m.out = null; o.gain.setTargetAtTime(0, actx.currentTime, .05); setTimeout(() => o.disconnect(), 400); } return; }
+  const now = actx.currentTime;
+  if (!m.out) { m.at = now + .05 - m.pos; m.out = actx.createGain(); m.out.gain.value = .8; m.out.connect(actx.destination); m.idx = CHOIR_NOTES.findIndex(n => n[0] >= m.pos); if (m.idx < 0) m.idx = CHOIR_NOTES.length; }
+  m.pos = Math.max(m.pos, now - m.at);
+  while (m.idx < CHOIR_NOTES.length && CHOIR_NOTES[m.idx][0] < m.pos + .5) choirNote(actx, m.out, m.at + CHOIR_NOTES[m.idx][0], CHOIR_NOTES[m.idx++]);
+}
+const CHOIR_HOUR = 18, CHOIR_LATE = 23, CHOIR_LEN = Math.ceil(CHOIR_SONG_LEN) + 1, CHOIR_R = .95;
 const choirDay = () => Math.floor((S.clock - 6) / 24);
 // true in the hours before today's rehearsal, so the DJ doesn't start something it can't finish
 function choirSoon() { if (!S.city.choir || S.choirDay === choirDay()) return false; const hr = S.clock % 24; return hr >= CHOIR_HOUR - 6 && hr < CHOIR_LATE; }
@@ -1093,7 +1131,7 @@ function startChoir() {
   const spot = choirSpot(); if (!spot || !S.tents.length) return false;
   const n = clamp(S.tents.length + 2, 5, 8), members = [];
   for (let i = 0; i < n; i++) { const t = pick(S.tents); members.push({ gx: t.gx, gy: t.gy + .3, home: t, a: i / n * Math.PI * 2 + .3, look: look(false), step: 0, flip: false, back: false }); }
-  S.choir = { cx: spot[0], cy: spot[1], state: 'gather', t: 0, until: CHOIR_LEN, members, beat: 0, chord: 0, spawn: 2, line: 0, grandola: false };
+  S.choir = { cx: spot[0], cy: spot[1], state: 'gather', t: 0, until: CHOIR_LEN, members, spawn: 2, grandola: false, mus: { pos: 0, idx: 0, out: null } };
   const q = iso(spot[0], spot[1], 34); floatXY(q.x, q.y, 'Coro da Achada: ensaio aberto', '#ffd36b');
   return true;
 }
@@ -1116,12 +1154,6 @@ function updChoir(dt, hr) {
   } else if (c.state === 'sing') {
     c.t += dt;
     for (const m of c.members) { if (moveEnt(m, c.cx + Math.cos(m.a) * CHOIR_R, c.cy + Math.sin(m.a) * CHOIR_R, 1.4, dt)) { m.moving = false; face(m, c.cx - m.gx, c.cy - m.gy); } }
-    c.beat -= dt;
-    if (c.beat <= 0) {
-      c.beat = 1.6;
-      if (!song && gd(S.player, { gx: c.cx, gy: c.cy }) < 6) { const ch = CHOIR_CHORDS[c.chord++ % CHOIR_CHORDS.length]; ch.forEach((f, i) => tone(f, 1.5, i ? 'sine' : 'triangle', .026, i * .04)); }
-      c.line++;
-    }
     if (Math.random() < dt * 5) { const m = pick(c.members), q = iso(m.gx, m.gy, 17); S.parts.push({ x: q.x, y: q.y, vx: rnd(-4, 4), vy: -13, life: 1.1, type: 'note', col: pick(['#ffffff', '#ffd36b', '#ff8aa8']) }); }
     // an open choir: whoever passes by joins the rehearsal, and the camp
     for (const a of S.arrivals) if (a.state !== 'leave' && Math.hypot(a.gx - c.cx, a.gy - c.cy) < 1.9) { a.gone = true; joinOne(a.gx, a.gy); }
@@ -1157,7 +1189,10 @@ function drawBubble(x, y, lines) {
 function drawChoirBubble() {
   const c = S.choir; if (!c || c.state !== 'sing') return;
   const q = iso(c.cx, c.cy, 26);
-  drawBubble(q.x, q.y + (Math.floor(S.t * 2) % 2), c.grandola ? ['Grândola Vila Morena', 'Terra da Fraternidade'] : [c.line % 2 ? 'Acordai, acordai!' : 'Acordai!']);
+  // the refrain line being sung (follows the music; without sound, the rehearsal clock)
+  const beat = SEMANA_FROM + (c.mus.out ? c.mus.pos : c.t) * SEMANA.bpm / 60;
+  let line = SEMANA_LINES[0][1]; for (const [b, l] of SEMANA_LINES) if (beat >= b) line = l;
+  drawBubble(q.x, q.y + (Math.floor(S.t * 2) % 2), c.grandola ? ['Grândola Vila Morena', 'Terra da Fraternidade'] : [line]);
 }
 
 /* ================= update ================= */
@@ -1810,7 +1845,7 @@ let last = performance.now();
 function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now;
   if (mode === 'play') update(dt); else S.t += dt;
-  songTick();
+  songTick(); choirTick();
   draw();
   hudT -= dt; if (hudT <= 0) { hud(); hudT = .1; }
   requestAnimationFrame(frame);
@@ -1821,7 +1856,7 @@ cityIdx = 0;
 titleScreen();
 fit();
 requestAnimationFrame(frame);
-window.__acampada = { get S() { return S; }, update: dt => update(dt), draw: () => draw(), setMode: m => { mode = m; }, newLevel: i => { cityIdx = i; newLevel(); } };
+window.__acampada = { choirSong: { full: () => semanaNotes(0), note: choirNote, bpm: SEMANA.bpm }, get S() { return S; }, update: dt => update(dt), draw: () => draw(), setMode: m => { mode = m; }, newLevel: i => { cityIdx = i; newLevel(); } };
 })();
 </script>
 </body>

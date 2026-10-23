@@ -24,7 +24,9 @@ The game is entirely in Portuguese. On a computer the game scales up to fill the
 and the ⛶ button (or F) switches to full screen.
 
 In Lisboa, the Coro da Achada (the open choir of the Casa da Achada) holds its rehearsal every day at 18:00:
-campers come out of their tents, stand in a circle and sing *Acordai*, and passers-by join the camp. Singing
+campers come out of their tents, stand in a circle and sing the refrain of *A semana sangrenta* (the choir's
+Portuguese version of *La Semaine sanglante*, tune by Pierre Dupont, transcribed from a public-domain SATB score),
+and passers-by join the camp. Singing
 *Grândola* while the choir is there adds much more pressure. The DJ, the choir and the donkey tandem take turns
 in the square, and the stage rotates through artists who played at the Rossio and Porto acampadas.
 Bicicletadas ride in with the dawn raid and hold up the police van.
