@@ -21,6 +21,6 @@ from Google Fonts when online and fall back to system fonts offline.
 Fill the pressure bar to hold a square. Hold all five to win.
 
 In every square, once the crowd is big enough, gather in the centre and sing *Grândola, Vila Morena*:
-the police freeze and the song plays, Rui's own MIDI arrangement played by the game's built-in synth.
+the police freeze for the whole song, Rui's own MIDI arrangement played by the game's built-in synth.
 
 Cleared squares are saved in the browser on that device only.

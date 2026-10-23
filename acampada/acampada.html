@@ -872,9 +872,11 @@ function onRaidEnd() {
 
 /* ================= city events (v3) ================= */
 function sing() {
-  S.freeze = 10; S.singCd = 60; S.support = Math.min(100, S.support + 8); S.morale = Math.min(100, S.morale + 8); S.pressure = Math.min(100, S.pressure + 3);
-  const q = iso(5, 5, 40); floatXY(q.x, q.y, 'Grândola, Vila Morena', '#ffd36b');
   startSong();
+  // the police stay frozen for as long as the song plays (10 s if there is no sound); the next sing-along is 60 s after it ends
+  S.freeze = song ? songEnd - song.pos : 10; S.singCd = S.freeze + 60;
+  S.support = Math.min(100, S.support + 8); S.morale = Math.min(100, S.morale + 8); S.pressure = Math.min(100, S.pressure + 3);
+  const q = iso(5, 5, 40); floatXY(q.x, q.y, 'Grândola, Vila Morena', '#ffd36b');
 }
 function updEvents(dt, hr) {
   const p = S.player, c = S.city;
