@@ -370,7 +370,9 @@ const VPAL = { W: '#f3eee2', s: '#d2cab6' };
 
 /* ================= cities (from reporting on each square) ================= */
 const CITIES = [
-  { name: 'Porto', place: 'Praça D. João I', ground: 'granite', police: 1.0, patrols: false, helmets: true, cleaners: true, artists: ['Clã', 'Capicua'], tag: 'Capacetes azuis e a equipa de limpeza',
+  { name: 'Porto', place: 'Praça D. João I', ground: 'granite', police: 1.0, patrols: false, helmets: true, cleaners: true,
+    // artists who played at the Porto acampada (from @acampadaporto's daily programmes, October 2026)
+    artists: ['Manel Cruz', 'Emmy Curl', 'Clã', 'Capicua', 'Egoísticos Implacáveis', 'Unsafe Space Garden', 'Sapatrux', 'Roídos na Acampada'], tag: 'Capacetes azuis e a equipa de limpeza',
     intro: '10 de outubro. A primeira acampada monta-se entre o Rivoli e o Palácio Atlântico. Os capacetes azuis vão para quem segura a frente do cordão, e uma equipa varre a praça para a polícia não ter desculpas.',
     clear: 'O Porto aguentou as noites. No sábado, às 17:00, começam a chegar tendas ao Rossio.',
     blocks: [[2, 4], [7, 4]],
@@ -849,7 +851,7 @@ function contextAction() {
     if (gd(p, st) > 1.25) continue;
     const cd = st.cd > 0 ? ' ' + Math.ceil(st.cd) + 's' : '';
     if (st.k === 'kitchen') return { label: 'Cozinhar uma refeição, 1 material' + cd, ok: st.cd <= 0 && S.supplies > 0, fn: () => { S.supplies--; S.morale = Math.min(100, S.morale + 15); S.support = Math.min(100, S.support + 2); st.cd = 5; steam(st, 10); float(st.gx, st.gy, 'Refeição servida', '#ffd36b', 24); sfx('crate'); } };
-    if (st.k === 'stage') { const a = artistNow(); return { label: (S.concert ? (S.concert.name ? S.concert.name + ' a tocar' : 'Concerto a decorrer') : a ? 'Concerto ' + a : 'Dar um concerto') + cd, ok: st.cd <= 0 && !S.concert, fn: () => startConcert(st) }; }
+    if (st.k === 'stage') { const a = artistNow(); return { label: (S.concert ? (S.concert.name ? (S.concert.name.length > 18 ? '♪ ' + S.concert.name : S.concert.name + ' a tocar') : 'Concerto a decorrer') : a ? (a.length > 18 ? a : 'Concerto ' + a) : 'Dar um concerto') + cd, ok: st.cd <= 0 && !S.concert, fn: () => startConcert(st) }; }
     if (st.k === 'info') return { label: 'Conversa de boas-vindas' + cd, ok: st.cd <= 0, fn: () => { st.cd = 30; let n = 0; for (const a of S.arrivals) if (a.state !== 'leave') { a.gone = true; joinOne(a.gx, a.gy); n++; } float(st.gx, st.gy, n ? fmt(n * crowdMult()) + ' juntaram-se' : 'Ninguém à espera', '#9ff0ff', 26); } };
     if (st.k === 'aid') return { label: 'Turno de descanso' + cd, ok: st.cd <= 0, fn: () => { st.cd = 25; S.morale = Math.min(100, S.morale + 10); float(st.gx, st.gy, 'Descansados', '#b6ff3b', 24); } };
   }

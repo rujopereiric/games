@@ -28,7 +28,7 @@ campers come out of their tents, stand in a circle and sing the refrain of *A se
 Portuguese version of *La Semaine sanglante*, tune by Pierre Dupont, transcribed from a public-domain SATB score),
 and passers-by join the camp. Singing
 *Grândola* while the choir is there adds much more pressure. The DJ, the choir and the donkey tandem take turns
-in the square, and the stage rotates through artists who played at the Rossio and Porto acampadas.
+in the square, and the stage rotates through artists who played at the Rossio and Porto acampadas (Porto's from @acampadaporto's daily programmes).
 Bicicletadas ride in with the dawn raid and hold up the police van.
 
 In every square, once the crowd is big enough, gather in the centre and sing *Grândola, Vila Morena*:
