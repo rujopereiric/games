@@ -6,7 +6,7 @@ the square when the police come at dawn.
 
 ## How to open it
 
-Open `acampada.html` in any modern browser. Everything is in that one file; the fonts load
+Open `index.html` in any modern browser. Everything is in that one file; the fonts load
 from Google Fonts when online and fall back to system fonts offline.
 
 ## How to play

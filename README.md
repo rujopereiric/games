@@ -7,4 +7,4 @@ download it and open it in any modern browser. No install, works offline.
   Subida da Rampa do Vale de Santo António, an uphill cobblestone bike time trial in Lisbon.
   Open `rampa-do-vale/jogo-da-rampa.html`.
 - [`acampada/`](acampada/) — **Acampada**: pixel-art game about the housing protest camps in Portugal.
-  Hold the square in Porto, Lisboa, Coimbra, Braga and Faro. Open `acampada/acampada.html`.
+  Hold the square in Porto, Lisboa, Coimbra, Braga and Faro. Open `acampada/index.html`.
