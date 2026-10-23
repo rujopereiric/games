@@ -390,7 +390,7 @@ const CITIES = [
     L: [{ a: 0, b: 4, h: 44, style: 'pombal', col: '#f2efe6' }, { a: 4, b: 10, h: 42, style: 'pombal', col: '#e3b54b', neon: '#57ffb0' }],
     R: [{ a: 0, b: 2, h: 40, style: 'pombal', col: '#e9a6a0' }, { a: 2, b: 6, h: 58, style: 'church', roof: '#cfc6b0' }, { a: 6, b: 10, h: 46, style: 'camara', roof: '#c4674a' }],
     C: { h: 40, style: 'pombal', col: '#9ec3d9' } },
-  { name: 'Braga', place: 'Avenida Central', ground: 'checker', police: 1.38, patrols: true, students: true, noTents: true, sing: true, tag: 'No tents: an assembly at the chafariz',
+  { name: 'Braga', place: 'Avenida Central', ground: 'checker', police: 1.38, patrols: true, students: true, noTents: true, tag: 'No tents: an assembly at the chafariz',
     intro: 'By the chafariz on the Avenida Central, students from the Universidade do Minho hold a popular assembly without tents. Grow the crowd, and when it’s big enough, gather by the fountain and sing.',
     clear: 'Braga held without a single tent.',
     blocks: [[4, 4], [5, 4], [4, 5], [5, 5], [1, 1], [8, 1], [1, 8], [8, 8]],
@@ -832,7 +832,7 @@ function contextAction() {
   if (!S || mode !== 'play') return null;
   const p = S.player;
   if (S.tandem && S.tandem.state === 'wait' && gd(p, S.tandem) < 1.4) return { label: 'Help hoist the donkey head', fn: hoist, ok: true };
-  if (S.city.sing && Math.hypot(p.gx - 5, p.gy - 5) < 2.2) { const n = people(); return { label: n < 12 ? 'Cantar Grândola · need a bigger crowd' : S.singCd > 0 ? 'Cantar Grândola ' + Math.ceil(S.singCd) + 's' : 'Cantar Grândola', ok: n >= 12 && S.singCd <= 0, fn: sing }; }
+  if (Math.hypot(p.gx - 5, p.gy - 5) < 2.2) { const n = people(); return { label: n < 12 ? 'Cantar Grândola · need a bigger crowd' : S.singCd > 0 ? 'Cantar Grândola ' + Math.ceil(S.singCd) + 's' : 'Cantar Grândola', ok: n >= 12 && S.singCd <= 0, fn: sing }; }
   for (const st of S.stations) {
     if (gd(p, st) > 1.25) continue;
     const cd = st.cd > 0 ? ' ' + Math.ceil(st.cd) + 's' : '';
@@ -879,6 +879,7 @@ function sing() {
 function updEvents(dt, hr) {
   const p = S.player, c = S.city;
   S.freeze = Math.max(0, S.freeze - dt); S.singCd = Math.max(0, S.singCd - dt);
+  if (!S.singHint && people() >= 12) { S.singHint = true; const q = iso(5, 5, 34); floatXY(q.x, q.y, 'Big crowd: sing Grândola in the centre', '#ffd36b'); }
   if ((S.freeze > 0 || song) && Math.random() < dt * 8 && S.residents.length) { const r = pick(S.residents), q = iso(r.gx, r.gy, 18); S.parts.push({ x: q.x, y: q.y, vx: rnd(-4, 4), vy: -12, life: 1.1, type: 'note', col: pick(['#ffd36b', '#ffffff', '#ff3b4e']) }); }
   // Porto: blue helmet crate
   if (c.helmets) {
