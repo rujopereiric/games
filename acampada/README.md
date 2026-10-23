@@ -35,3 +35,6 @@ In every square, once the crowd is big enough, gather in the centre and sing *Gr
 the police freeze for 30 seconds while Rui's own MIDI arrangement (0:06–0:43, sped up to fit 30 s) plays on the game's built-in synth.
 
 Cleared squares are saved in the browser on that device only.
+
+`og.jpg` (link preview) and `apple-touch-icon.png` (iPhone home-screen icon) sit next to `index.html` for hosting;
+the preview tags point to https://acampadapixel.pt/. The favicon is embedded in the page.
