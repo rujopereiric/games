@@ -254,13 +254,14 @@ canvas{ display:block; width:100%; height:auto; aspect-ratio:256/240; image-rend
   <div class="stage">
     <canvas id="c" width="256" height="240" aria-label="A acampada vista de cima, em perspetiva"></canvas>
   </div>
-  <button id="ctxBtn" class="act" type="button" hidden>Ação</button>
   <nav class="actions" aria-label="Ações da acampada">
     <button class="act" id="btnChain" type="button">Cordão<small>Proteger</small></button>
     <button class="act red" id="btnLive" type="button">Direto<small>Transmitir</small></button>
     <button class="act green" id="btnBuild" type="button">Montar<small>Construir</small></button>
     <button class="act ink" id="btnVote" type="button">Assembleia<small>Votar</small></button>
   </nav>
+  <!-- the context button sits under the fixed ones, so popping up never moves them -->
+  <button id="ctxBtn" class="act" type="button" hidden>Ação</button>
   <p class="help" id="help">Toca na praça para andar.</p>
 </main>
 <div id="ov"></div>
