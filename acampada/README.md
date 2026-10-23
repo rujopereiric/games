@@ -16,9 +16,12 @@ from Google Fonts when online and fall back to system fonts offline.
 - **Direto (L):** go live, so raids go viral and bring support.
 - **Montar (B):** build a kitchen, info point, first aid or stage with donated supplies.
 - **Assembleia (V):** vote for a perk for the camp.
-- **E / Space:** the context action next to a station; **P / Esc:** pause; **I:** info posters.
+- **E / Space:** the context action next to a station; **P / Esc:** pause; **I:** info posters; **F:** full screen (computers).
 
 Fill the pressure bar to hold a square. Hold all five to win.
+
+The game is entirely in Portuguese. On a computer the game scales up to fill the window,
+and the ⛶ button (or F) switches to full screen.
 
 In every square, once the crowd is big enough, gather in the centre and sing *Grândola, Vila Morena*:
 the police freeze for 30 seconds while Rui's own MIDI arrangement (0:06–0:43, sped up to fit 30 s) plays on the game's built-in synth.
