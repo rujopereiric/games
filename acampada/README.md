@@ -20,6 +20,12 @@ from Google Fonts when online and fall back to system fonts offline.
 
 Fill the pressure bar to hold a square. Hold all five to win.
 
+- **? / H:** "Como jogar", the goal and rules of the game.
+- **Partilha:** after a square is cleared, makes an Instagram story (1080×1920) with the square as it was won,
+  a rotating slogan and the next rally, and opens the phone's share sheet (or downloads the image on a computer).
+  Rallies and slogans are in `RALLIES` and `SLOGANS` in `index.html`.
+- On phones the camera starts zoomed out, showing the whole square; the magnifier button zooms in on the player.
+
 The game is entirely in Portuguese. On a computer the game scales up to fill the window,
 and the ⛶ button (or F) switches to full screen.
 
