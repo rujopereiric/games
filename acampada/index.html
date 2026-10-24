@@ -94,6 +94,10 @@ body{ margin:0; min-height:100%; color:var(--ink); background:var(--bg); font-fa
 .bub::after{ content:''; position:absolute; left:50%; bottom:-5px; margin-left:-4px; border:4px solid transparent; border-top-color:#fff; border-bottom:0; }
 .camBtn{ position:absolute; right:8px; bottom:8px; z-index:2; width:46px; height:46px; display:grid; place-items:center; padding:0; background:#f4f1ea; color:#0b0a0a; border:2px solid #0b0a0a; box-shadow:0 3px 0 #0b0a0a; font:800 14px/1 Jost, Futura, sans-serif; text-transform:uppercase; letter-spacing:.3px; cursor:pointer; }
 .camBtn[hidden]{ display:none; } .camBtn:active{ transform:translateY(2px); box-shadow:0 1px 0 #0b0a0a; } #rotHint button{ flex:none; background:none; border:0; color:#f4f1ea; font-size:18px; line-height:1; padding:4px 6px; cursor:pointer; }
+/* upright phones: the city name gets its own line so the header buttons always fit; narrow phones shrink the action labels */
+.cam:not(.land) .top{ flex-wrap:wrap; row-gap:3px; } .cam:not(.land) #city{ order:5; flex-basis:100%; }
+.cam:not(.land) .top .mini{ padding:0 6px; }
+.cam .actions{ grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr); } .cam .act{ font-size:clamp(10.5px, 3.6vw, 15px); padding-left:2px; padding-right:2px; }
 /* phone on its side: details and buttons in a column on the right */
 .land .wrap{ display:grid; grid-template-columns:1fr 212px; grid-template-rows:auto 1fr; padding-left:calc(env(safe-area-inset-left,0px) + 6px); padding-right:calc(env(safe-area-inset-right,0px) + 6px); }
 .land .stage{ grid-column:1; grid-row:1 / span 2; }
@@ -240,7 +244,7 @@ canvas{ display:block; width:100%; height:auto; aspect-ratio:256/240; image-rend
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter></svg>
 <main class="wrap">
   <header class="hud">
-    <div class="top"><span class="logo rough">ACAMPADA</span><span id="city">Porto</span><span id="clock">DIA 1 · 17:00</span><button id="info" class="mini" type="button" aria-label="Informação: ver os cartazes">i</button><button id="rules" class="mini" type="button" aria-label="Como jogar">?</button><button id="mute" class="mini" type="button" aria-label="Desligar o som">♪</button><button id="full" class="mini" type="button" aria-label="Ecrã inteiro" hidden>⛶</button></div>
+    <div class="top"><span class="logo rough">ACAMPADA</span><span id="city">Porto</span><span id="clock">DIA 1 · 17:00</span><button id="info" class="mini" type="button" aria-label="Informação: ver os cartazes">i</button><button id="rules" class="mini" type="button" aria-label="Como jogar">?</button><button id="pauseBtn" class="mini" type="button" aria-label="Pausa e menu">❚❚</button><button id="mute" class="mini" type="button" aria-label="Desligar o som">♪</button><button id="full" class="mini" type="button" aria-label="Ecrã inteiro" hidden>⛶</button></div>
     <div class="hudbody"><div class="hudL">
     <dl class="stats">
       <div><dt>Tendas</dt><dd id="sT">0</dd></div>
@@ -3073,7 +3077,7 @@ function pause() {
   show(`<h2>Acampada<br><u>Dia ${day}</u></h2>
   <div class="slots"><div class="slot"><span class="t">17:00</span><span class="n">Skate</span></div><div class="slot"><span class="t">19:00</span><span class="n">Assembleia popular</span></div>
   <div class="slot"><span class="t">18:00</span><span class="n">Coros</span><span class="d">(ensaio aberto)</span></div><div class="slot"><span class="t">20:30</span><span class="n">Jantar popular</span></div></div>
-  <p class="help">Em pausa.</p><button class="btnp" data-a="resume">Voltar →</button><button class="btnp" data-a="rules">Como jogar</button><button class="btnp" data-a="chapters">Praças</button>`, 'green');
+  <p class="help">Em pausa.</p><button class="btnp" data-a="resume">Voltar →</button><button class="btnp" data-a="rules">Como jogar</button><button class="btnp" data-a="chapters">Praças</button><button class="btnp" data-a="title">Menu inicial</button>`, 'green');
 }
 function audioOn() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === 'suspended') actx.resume(); }
 function begin() { ov.hidden = true; mode = 'play'; if (CAM.upright) showRotHint(); float(S.player.gx, S.player.gy, pcMQ.matches ? 'Clica para andar' : 'Toca para andar', '#ffffff', 26); }
@@ -3155,6 +3159,7 @@ $('btnVote').addEventListener('click', assembly);
 $('ctxBtn').addEventListener('click', () => { const c = contextAction(); if (c && c.ok) { c.fn(); hudT = 0; } });
 $('info').addEventListener('click', () => openInfo(0));
 $('rules').addEventListener('click', openRules);
+$('pauseBtn').addEventListener('click', () => { if (mode === 'play') pause(); else if (mode === 'paused') { ov.hidden = true; mode = 'play'; } });
 $('mute').addEventListener('click', () => { muted = !muted; $('mute').textContent = muted ? '×' : '♪'; $('mute').setAttribute('aria-label', muted ? 'Ligar o som' : 'Desligar o som'); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 
