@@ -50,7 +50,7 @@ body{ margin:0; min-height:100%; color:var(--ink); background:var(--bg); font-fa
 .wide body{ overflow:hidden; }
 .wide .wrap{ position:fixed; inset:0; width:auto; margin:0; display:flex; flex-direction:column; gap:8px; padding:8px; }
 .wide .hud{ display:flex; align-items:center; gap:22px; padding:6px 14px; }
-.wide .top{ flex:0 0 380px; flex-wrap:wrap; row-gap:6px; }
+.wide .top{ flex:0 0 450px; flex-wrap:wrap; row-gap:6px; }
 .wide .logo{ font-size:26px; }
 .wide #city{ flex-basis:100%; order:5; }
 .wide .hudbody{ flex:1; align-items:center; gap:22px; min-width:0; }
@@ -66,6 +66,16 @@ body{ margin:0; min-height:100%; color:var(--ink); background:var(--bg); font-fa
 .wide #ctxBtn{ margin:0; }
 .wide #ctxBtn[hidden]{ display:block; visibility:hidden; }
 .wide .help{ grid-column:1 / -1; margin:0 2px; text-align:center; }
+/* wide computer windows: bigger labels, they were hard to read */
+.wide #city,.wide #clock{ font-size:15px; }
+.wide .mini{ font-size:15px; line-height:24px; padding:0 9px; }
+.wide .stats dt{ font-size:13px; } .wide .stats dd{ font-size:28px; }
+.wide .bar{ grid-template-columns:92px 1fr; font-size:13.5px; } .wide .bar i{ height:13px; }
+.wide .pm figcaption{ font-size:12px; }
+.wide .act{ font-size:19px; padding:10px 4px 8px; } .wide .act small{ font-size:13.5px; }
+.wide #ctxBtn{ font-size:19px; }
+.wide .help{ font-size:13.5px; }
+.wide .flt{ font-size:12px; padding:3px 6px 2px; } .wide .bub{ font-size:12px; padding:4px 8px 3px; } .wide #ban{ font-size:17px; }
 /* phones: the square fills the rest of the screen and a camera follows the player (see updCam) */
 .cam body{ overflow:hidden; }
 .cam .wrap{ position:fixed; inset:0; bottom:auto; height:var(--vvh, 100dvh); width:auto; margin:0; padding:calc(env(safe-area-inset-top,0px) + 6px) 6px calc(env(safe-area-inset-bottom,0px) + 6px); display:flex; flex-direction:column; gap:6px; }
