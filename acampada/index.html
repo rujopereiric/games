@@ -108,6 +108,14 @@ body{ margin:0; min-height:100%; color:var(--ink); background:var(--bg); font-fa
 .land .stats{ grid-template-columns:repeat(2,1fr); margin:4px 0; } .land .stats dd{ font-size:18px; }
 .land .actions{ grid-template-columns:repeat(2,1fr); gap:5px; } .land .act{ font-size:13px; padding:6px 4px 5px; }
 .land #ctxBtn{ font-size:14px; padding:6px 4px 5px; }
+/* sideways phones only have 300-360 px of height (less with the browser's bar): a compact column so every button fits */
+.land .hud{ padding:5px 7px; }
+.land .top{ row-gap:3px; column-gap:5px; } .land .logo{ font-size:16px; } .land #clock{ font-size:11px; }
+.land .top .mini{ font-size:11px; line-height:17px; padding:0 5px; border-width:1.5px; } .land #city{ font-size:10px; }
+.land .stats{ grid-template-columns:repeat(4,1fr); gap:2px; margin:3px 0 2px; } .land .stats dt{ font-size:8px; letter-spacing:0; } .land .stats dd{ font-size:15px; }
+.land .bar{ grid-template-columns:52px 1fr; gap:4px; margin-top:2px; font-size:9px; } .land .bar i{ height:7px; border-width:1.5px; }
+.land .actions{ gap:4px; } .land .act{ font-size:12px; padding:4px 2px 3px; } .land .act small{ font-size:9.5px; margin-top:1px; }
+.land #ctxBtn{ font-size:12px; padding:5px 4px 4px; margin-top:4px; }
 .mini[hidden]{ display:none; }
 .rough{ filter:url(#rough); }
 .hud{ background:var(--panel); border:2px solid var(--line); padding:8px 10px 9px; }
